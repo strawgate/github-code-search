@@ -3,8 +3,107 @@ name = "github-code-search"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=2.12.4",
     "gitpython>=3.1.45",
+    "pydantic>=2.11.9",
+    "rpygrep>=0.1.2",
 ]
+
+[project.scripts]
+github-code-search-mcp = "github_code_search.main:run_mcp"
+
+[build-system]
+requires = ["uv_build>=0.8.2,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+env_files = [".env"]
+addopts = ["--inline-snapshot=create,fix","-vv","-s"]
+markers = [
+    "skip_on_ci: Skip running the test when running on CI",
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "pytest-mock",
+  "pytest-asyncio",
+  "ruff",
+  "inline-snapshot>=0.29.1",
+]
+
+[tool.ruff]
+target-version = "py312"
+lint.fixable = ["ALL"]
+lint.ignore = [
+    "COM812",
+    "PLR0913", # Too many arguments, MCP Servers have a lot of arguments, OKAY?!
+]
+lint.extend-select = [
+    "A",
+    "ARG",
+    "B",
+    "C4",
+    "COM",
+    "DTZ",
+    "E",
+    "EM",
+    "F",
+    "FURB",
+    "I",
+    "LOG",
+    "N",
+    "PERF",
+    "PIE",
+    "PLR",
+    "PLW",
+    "PT",
+    "PTH",
+    "Q",
+    "RET",
+    "RSE",
+    "RUF",
+    "S",
+    "SIM",
+    "TC",
+    "TID",
+    "TRY",
+    "UP",
+    "W",
+]
+
+line-length = 140
+extend-exclude=["**/clients/graphql/**"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"**/tests/*.py" = [
+    "S101", # Ignore asserts
+    "DTZ005", # Ignore datetime.UTC
+    "PLR2004", # Ignore magic values
+    "E501", # Ignore line length
+    
+]
+"**/references/*" = ["ALL"]
+"template/*" = ["ALL"]
+"**/vendored/**" = ["ALL"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+extraPaths = ["src/"]
+include = ["src/"]
+exclude = [
+    "**/archive/**",
+    "**/node_modules/**",
+    "**/__pycache__/**",
+    "**/.venv/**",
+    ".venv",
+    "**/.pytest_cache/**",
+    "**/.ruff_cache/**",
+    "**/uv/python/**",
+    "**/clients/graphql/**",
+]
+reportMissingTypeStubs = false
+reportExplicitAny = false
