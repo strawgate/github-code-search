@@ -25,5 +25,9 @@ repository_server: RepositoryServer = RepositoryServer(logger=logger, clone_dir=
 repository_server.register_tools(mcp=mcp)
 
 
-if __name__ == "__main__":
+def run_mcp():
     mcp.run(transport="sse")
+
+
+if __name__ == "__main__":
+    run_mcp()
